@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class CubeFacesState
+public class CubeFacesState : MonoBehaviour
 {
-    /*public List<GameObject> front = new List<GameObject>();
+    public List<GameObject> front = new List<GameObject>();
     public List<GameObject> back = new List<GameObject>();
     public List<GameObject> up = new List<GameObject>();
     public List<GameObject> down = new List<GameObject>();
     public List<GameObject> right = new List<GameObject>();
-    public List<GameObject> left = new List<GameObject>();*/
+    public List<GameObject> left = new List<GameObject>();
 
-    public List<char> up;
+    /*public List<char> up;
     public List<char> down;
     public List<char> front;
     public List<char> back;
     public List<char> left;
-    public List<char> right;
+    public List<char> right;*/
 
     public static bool autoShuffle = false;
     public static bool started = false;
@@ -56,33 +56,32 @@ public class CubeFacesState
         }
     }
 
-    // Constructorul implicit
-    public CubeFacesState()
+    string GetSideString(List<GameObject> side)
     {
-        // Ini?ializ?ri implicite
+        string sideString = "";
+        foreach (GameObject face in side)
+        {
+            sideString += face.name[0].ToString();
+        }
+        return sideString;
     }
 
-    // Constructor care prime?te un string pentru a ini?ializa starea cubului
-    public CubeFacesState(string state)
+    public string GetStateString()
     {
-        if (state.Length != 54)
-        {
-            throw new ArgumentException("State must be a string of length 54.");
-        }
-
-        // Ini?ializeaz? fiecare fa?? a cubului pe baza stringului dat
-        up = state.Substring(0, 9).ToList();
-        right = state.Substring(9, 9).ToList();
-        front = state.Substring(18, 9).ToList();
-        left = state.Substring(27, 9).ToList();
-        back = state.Substring(36, 9).ToList();
-        down = state.Substring(45, 9).ToList();
+        string stateString = "";
+        stateString += GetSideString(up);
+        stateString += GetSideString(right);
+        stateString += GetSideString(front);
+        stateString += GetSideString(down);
+        stateString += GetSideString(left);
+        stateString += GetSideString(back);
+        return stateString;
     }
 
     // Metod? pentru a returna starea cubului ca string
-    public override string ToString()
+    /*public override string ToString()
     {
         return new string(up.ToArray()) + new string(right.ToArray()) + new string(front.ToArray()) +
                new string(left.ToArray()) + new string(back.ToArray()) + new string(down.ToArray());
-    }
+    }*/
 }

@@ -19,7 +19,7 @@ public class AutoShuffle : MonoBehaviour
 
     void Start()
     {
-        _state = new CubeFacesState();
+        _state = FindObjectOfType<CubeFacesState>();
         _read = FindObjectOfType<ReadCubeFaces>();
     }
 
@@ -51,7 +51,7 @@ public class AutoShuffle : MonoBehaviour
         _state = state;
     }
 
-    public void Move(string move)
+    void Move(string move)
     {
         _read.ReadState();
         CubeFacesState.autoShuffle = true;

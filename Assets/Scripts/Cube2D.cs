@@ -16,19 +16,19 @@ public class Cube2D : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SetColor()
     {
         _state = FindObjectOfType<CubeFacesState>();
-        
+
         Update2DCube(_state.front, front);
         Update2DCube(_state.back, back);
         Update2DCube(_state.left, left);

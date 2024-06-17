@@ -9,16 +9,15 @@ public class RotationScript : MonoBehaviour
     private Vector3 _localForward;
     private Vector3 _mouseRef;
     private bool _dragging = false;
-    
     private float _sensitivity = 0.4f;
     private Vector3 _rotation;
     private float _rotationSpeed = 300f;
     private bool _automatic = false;
-    
+
     private ReadCubeFaces _read;
     private CubeFacesState _state;
     private Quaternion _targetQ;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,12 +75,12 @@ public class RotationScript : MonoBehaviour
         {
             _rotation.z = (mouseOffset.x + mouseOffset.y) * _sensitivity * -1;
         }
-        
+
         transform.Rotate(_rotation, Space.Self);
 
         _mouseRef = Input.mousePosition;
     }
-    
+
     public void Rotate(List<GameObject> side)
     {
         _sideActivated = side;
@@ -99,7 +98,7 @@ public class RotationScript : MonoBehaviour
         _sideActivated = side;
         _automatic = true;
     }
-    
+
     public void RotateToRight()
     {
         Vector3 v = transform.localEulerAngles;
@@ -121,7 +120,7 @@ public class RotationScript : MonoBehaviour
         if (Quaternion.Angle(transform.localRotation, _targetQ) <= 1)
         {
             transform.localRotation = _targetQ;
-            
+
             _state.PutDown(_sideActivated, transform.parent);
             _read.ReadState();
             CubeFacesState.autoShuffle = false;

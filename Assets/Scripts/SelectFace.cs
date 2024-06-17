@@ -1,4 +1,4 @@
- using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,9 +6,8 @@ public class SelectFace : MonoBehaviour
 {
     private CubeFacesState _state;
     private ReadCubeFaces _read;
-    
     private int _layerMask = 1 << 6;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +44,7 @@ public class SelectFace : MonoBehaviour
                     if (cs.Contains(face))
                     {
                         _state.PickUp(cs);
-                        
+
                         cs[4].transform.parent.GetComponent<RotationScript>().Rotate(cs);
                     }
                 }
