@@ -35,15 +35,17 @@ public class AutoShuffle : MonoBehaviour
     public void Shuffle()
     {
         List<string> moves = new List<string>();
-        int shuffleLen = Random.Range(10, 30);
+        int shuffleLen = Random.Range(3, 4);
 
         for (int i = 0; i < shuffleLen; ++i)
         {
             int randomMove = Random.Range(0, _allMoves.Count);
             moves.Add(_allMoves[randomMove]);
+            Debug.Log( _allMoves[randomMove] + " ");
         }
 
         moveList = moves;
+        
     }
 
     public void SetState(CubeFacesState state)

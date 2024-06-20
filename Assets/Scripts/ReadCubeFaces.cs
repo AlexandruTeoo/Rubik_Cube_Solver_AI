@@ -38,9 +38,9 @@ public class ReadCubeFaces : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //ReadState();
+        /*ReadState();
 
-        /*// Before the raycasts
+        // Before the raycasts
         print("Starting raycasts...");
         Transform faceTransform = front;
 
@@ -48,7 +48,7 @@ public class ReadCubeFaces : MonoBehaviour
         RaycastHit hit;
 
         if (Physics.Raycast(face, faceTransform.forward, out hit, Mathf.Infinity, _layerMask))
-        { 
+        {
             Debug.DrawRay(face, faceTransform.forward * hit.distance, Color.yellow);
             //faces.Add(hit.collider.gameObject);
             print(hit.collider.gameObject.name);
@@ -65,7 +65,7 @@ public class ReadCubeFaces : MonoBehaviour
         RaycastHit hit1;
 
         if (Physics.Raycast(face1, faceTransform.forward, out hit1, Mathf.Infinity, _layerMask))
-        { 
+        {
             Debug.DrawRay(face1, faceTransform.forward * hit1.distance, Color.yellow);
             //faces.Add(hit.collider.gameObject);
             print(hit1.collider.gameObject.name);
@@ -82,7 +82,7 @@ public class ReadCubeFaces : MonoBehaviour
         RaycastHit hit2;
 
         if (Physics.Raycast(face2, faceTransform.forward, out hit2, Mathf.Infinity, _layerMask))
-        { 
+        {
             Debug.DrawRay(face2, faceTransform.forward * hit2.distance, Color.yellow);
             //faces.Add(hit.collider.gameObject);
             print(hit2.collider.gameObject.name);
@@ -93,7 +93,7 @@ public class ReadCubeFaces : MonoBehaviour
         }
         print("Raycasts completed.");
         // Print additional information
-        print($"Hit distance 1: {hit.distance}");
+        *//*print($"Hit distance 1: {hit.distance}");
         print($"Hit distance 2: {hit1.distance}");
         print($"Hit distance 3: {hit2.distance}");*/
     }
@@ -116,11 +116,11 @@ public class ReadCubeFaces : MonoBehaviour
     void SetFaceTransforms()
     {
         _upFace = BuildFaces(up, new Vector3(90, 90, 0));
-        _downFace = BuildFaces(down, new Vector3(270, 90, 0));
-        _frontFace = BuildFaces(front, new Vector3(0, 90, 0));
-        _backFace = BuildFaces(back, new Vector3(0, 270, 0));
         _leftFace = BuildFaces(left, new Vector3(0, 180, 0));
+        _frontFace = BuildFaces(front, new Vector3(0, 90, 0));
         _rightFace = BuildFaces(right, new Vector3(0, 0, 0));
+        _backFace = BuildFaces(back, new Vector3(0, 270, 0));
+        _downFace = BuildFaces(down, new Vector3(270, 90, 0));
     }
 
     List<GameObject> BuildFaces(Transform faceTransform, Vector3 direction)
@@ -186,11 +186,11 @@ public class ReadCubeFaces : MonoBehaviour
         {
             // Scrieti datele pentru fiecare fata in fisierul text
             WriteFaceData(_upFace, up, writer);
-            WriteFaceData(_downFace, down, writer);
             WriteFaceData(_leftFace, left, writer);
-            WriteFaceData(_rightFace, right, writer);
             WriteFaceData(_frontFace, front, writer);
+            WriteFaceData(_rightFace, right, writer);
             WriteFaceData(_backFace, back, writer);
+            WriteFaceData(_downFace, down, writer);
         }
     }
 

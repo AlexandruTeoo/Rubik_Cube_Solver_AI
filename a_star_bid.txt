@@ -1,13 +1,11 @@
 Steps to solve the cube:
 U'
 F
-L
+R'
 R'
 D'
 F
 L
-F'
-L'
 D
 R
 L'
@@ -15,5 +13,5 @@ F'
 L
 R'
 
-Time taken: 35491 ms
+Time taken: 2476 ms
 Memory used: 8 KB
