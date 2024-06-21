@@ -35,7 +35,7 @@ public class AutoShuffle : MonoBehaviour
     public void Shuffle()
     {
         List<string> moves = new List<string>();
-        int shuffleLen = Random.Range(3, 4);
+        int shuffleLen = Random.Range(5, 7);
 
         for (int i = 0; i < shuffleLen; ++i)
         {

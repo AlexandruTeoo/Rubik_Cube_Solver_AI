@@ -44,6 +44,9 @@ public class Resolve : MonoBehaviour
 
         // Solve using A* bidirectional algorithm
         SolveAndSaveSolution(startState, A_star_bid_Solver.AStarBidirectionalSearch, "a_star_bid.txt");
+
+        // Solve using IDA* algorithm with maxIterations
+        SolveAndSaveSolution(startState, IDA_star_Solver.IDAStarSearch, "ida_star.txt");
     }
 
     string ReadCubeStateFromFile(string filePath)

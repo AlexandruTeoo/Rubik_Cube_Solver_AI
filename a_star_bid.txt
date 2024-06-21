@@ -1,17 +1,6 @@
 Steps to solve the cube:
-U'
-F
-R'
-R'
-D'
-F
-L
-D
-R
-L'
 F'
-L
-R'
+U
 
-Time taken: 2476 ms
-Memory used: 8 KB
+Time taken: 70 ms
+Memory used: 0 KB

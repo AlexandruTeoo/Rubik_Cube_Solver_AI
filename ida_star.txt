@@ -1,0 +1,6 @@
+Steps to solve the cube:
+F'
+U
+
+Time taken: 23 ms
+Memory used: 4 KB

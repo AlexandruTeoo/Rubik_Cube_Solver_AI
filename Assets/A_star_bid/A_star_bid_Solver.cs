@@ -10,115 +10,115 @@ public static class A_star_bid_Solver
 
     public static List<string> AStarBidirectionalSearch(string startState)
     {
-        var start = A_star_Solver.InitializeCubeState(startState);
-        var goal = A_star_Solver.InitializeCubeState("WWWWWWWWWOOOOOOOOOGGGGGGGGGRRRRRRRRRBBBBBBBBBYYYYYYYYY");
+        // Incepe masurarea timpului
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
 
-        var forwardQueue = new PriorityQueue<CubeState>();
-        var backwardQueue = new PriorityQueue<CubeState>();
+        // Incepe masurarea memoriei
+        long initialMemoryUsage = GetStableMemoryUsage();
 
-        var forwardClosed = new HashSet<string>();
-        var backwardClosed = new HashSet<string>();
+        CubeState start = InitializeCubeState(startState);
+        CubeState goal = InitializeCubeState(GetSolvedState());
 
-        forwardQueue.Enqueue(start, start.TotalCost);
-        backwardQueue.Enqueue(goal, goal.TotalCost);
+        PriorityQueue<CubeState> openSetStart = new PriorityQueue<CubeState>();
+        PriorityQueue<CubeState> openSetGoal = new PriorityQueue<CubeState>();
 
-        var forwardParents = new Dictionary<string, CubeState>();
-        var backwardParents = new Dictionary<string, CubeState>();
+        HashSet<string> closedSetStart = new HashSet<string>();
+        HashSet<string> closedSetGoal = new HashSet<string>();
 
-        forwardParents[start.State] = null;
-        backwardParents[goal.State] = null;
+        Dictionary<string, CubeState> cameFromStart = new Dictionary<string, CubeState>();
+        Dictionary<string, CubeState> cameFromGoal = new Dictionary<string, CubeState>();
 
-        while (forwardQueue.Count > 0 && backwardQueue.Count > 0)
+        openSetStart.Enqueue(start, start.TotalCost);
+        openSetGoal.Enqueue(goal, goal.TotalCost);
+
+        int iterationCount = 0;
+        int maxIterations = 5000;
+
+        while (openSetStart.Count > 0 && openSetGoal.Count > 0)
         {
-            var forwardCurrent = forwardQueue.Dequeue();
-            if (backwardClosed.Contains(forwardCurrent.State))
+            if (openSetStart.Count > 0)
             {
-                UnityEngine.Debug.Log($"Meeting point found at state: {forwardCurrent.State}");
-                return ConstructBidirectionalPath(forwardParents, backwardParents, forwardCurrent.State);
-            }
+                CubeState currentStart = openSetStart.Dequeue();
+                closedSetStart.Add(currentStart.State);
 
-            forwardClosed.Add(forwardCurrent.State);
-            UnityEngine.Debug.Log($"Forward exploring state: {forwardCurrent.State}");
-
-            foreach (var neighbor in A_star_Solver.GetSuccessors(forwardCurrent))
-            {
-                if (!forwardClosed.Contains(neighbor.State))
+                if (closedSetGoal.Contains(currentStart.State))
                 {
-                    forwardQueue.Enqueue(neighbor, neighbor.TotalCost);
-                    forwardParents[neighbor.State] = forwardCurrent;
+                    stopwatch.Stop();
+                    long finalMemoryUsage = GetStableMemoryUsage();
+                    long memoryUsedDuringSearch = finalMemoryUsage - initialMemoryUsage;
+
+                    UnityEngine.Debug.Log("Solution found!");
+                    UnityEngine.Debug.Log($"Time taken: {stopwatch.ElapsedMilliseconds} ms");
+                    UnityEngine.Debug.Log($"Memory used: {memoryUsedDuringSearch / 1024} KB");
+
+                    CubeState meetingNode = cameFromGoal[currentStart.State];
+                    return ReconstructPath(currentStart, meetingNode);
+                }
+
+                foreach (CubeState successor in GetSuccessors(currentStart))
+                {
+                    if (!closedSetStart.Contains(successor.State) && !openSetStart.Contains(successor))
+                    {
+                        cameFromStart[successor.State] = currentStart;
+                        openSetStart.Enqueue(successor, successor.TotalCost);
+                    }
                 }
             }
 
-            var backwardCurrent = backwardQueue.Dequeue();
-            if (forwardClosed.Contains(backwardCurrent.State))
+            if (openSetGoal.Count > 0)
             {
-                UnityEngine.Debug.Log($"Meeting point found at state: {backwardCurrent.State}");
-                return ConstructBidirectionalPath(forwardParents, backwardParents, backwardCurrent.State);
-            }
+                CubeState currentGoal = openSetGoal.Dequeue();
+                closedSetGoal.Add(currentGoal.State);
 
-            backwardClosed.Add(backwardCurrent.State);
-            UnityEngine.Debug.Log($"Backward exploring state: {backwardCurrent.State}");
-
-            foreach (var neighbor in A_star_Solver.GetSuccessors(backwardCurrent))
-            {
-                if (!backwardClosed.Contains(neighbor.State))
+                if (closedSetStart.Contains(currentGoal.State))
                 {
-                    backwardQueue.Enqueue(neighbor, neighbor.TotalCost);
-                    backwardParents[neighbor.State] = backwardCurrent;
+                    stopwatch.Stop();
+                    long finalMemoryUsage = GetStableMemoryUsage();
+                    long memoryUsedDuringSearch = finalMemoryUsage - initialMemoryUsage;
+
+                    UnityEngine.Debug.Log("Solution found!");
+                    UnityEngine.Debug.Log($"Time taken: {stopwatch.ElapsedMilliseconds} ms");
+                    UnityEngine.Debug.Log($"Memory used: {memoryUsedDuringSearch / 1024} KB");
+
+                    CubeState meetingNode = cameFromStart[currentGoal.State];
+                    return ReconstructPath(meetingNode, currentGoal);
+                }
+
+                foreach (CubeState successor in GetSuccessors(currentGoal))
+                {
+                    if (!closedSetGoal.Contains(successor.State) && !openSetGoal.Contains(successor))
+                    {
+                        cameFromGoal[successor.State] = currentGoal;
+                        openSetGoal.Enqueue(successor, successor.TotalCost);
+                    }
                 }
             }
-        }
 
-        return null; // No solution found
-    }
-
-    private static List<string> ConstructBidirectionalPath(Dictionary<string, CubeState> forwardParents, Dictionary<string, CubeState> backwardParents, string meetingPoint)
-    {
-        var forwardPath = new List<string>();
-        var backwardPath = new List<string>();
-
-        // Reconstruie?te calea de la start la meetingPoint
-        var current = forwardParents[meetingPoint];
-        while (current != null)
-        {
-            if (current.Move != null)
+            iterationCount++;
+            if (iterationCount >= maxIterations)
             {
-                forwardPath.Add(current.Move);
+                stopwatch.Stop();
+                long finalMemoryUsage = GetStableMemoryUsage();
+                long memoryUsedDuringSearch = finalMemoryUsage - initialMemoryUsage;
+
+                UnityEngine.Debug.LogError("Maximum iterations reached, stopping the search to avoid infinite loop.");
+                UnityEngine.Debug.Log($"Time taken: {stopwatch.ElapsedMilliseconds} ms");
+                UnityEngine.Debug.Log($"Memory used: {memoryUsedDuringSearch / 1024} KB");
+
+                return null;
             }
-            current = forwardParents[current.State];
-        }
-        forwardPath.Reverse();
-
-        // Reconstruie?te calea de la meetingPoint la goal
-        current = backwardParents[meetingPoint];
-        while (current != null)
-        {
-            if (current.Move != null)
-            {
-                backwardPath.Add(ReverseMove(current.Move));
-            }
-            current = backwardParents[current.State];
         }
 
-        // Îmbin?m cele dou? c?i
-        var path = new List<string>();
-        path.AddRange(forwardPath);
-        path.AddRange(backwardPath);
+        stopwatch.Stop();
+        long finalMemoryUsageAfterFailure = GetStableMemoryUsage();
+        long memoryUsedDuringSearchFailure = finalMemoryUsageAfterFailure - initialMemoryUsage;
 
-        return path;
-    }
+        UnityEngine.Debug.LogError("No solution found!");
+        UnityEngine.Debug.Log($"Time taken: {stopwatch.ElapsedMilliseconds} ms");
+        UnityEngine.Debug.Log($"Memory used: {memoryUsedDuringSearchFailure / 1024} KB");
 
-    private static string ReverseMove(string move)
-    {
-        if (move.Length == 1)
-        {
-            return move + "'";
-        }
-        else if (move.Length == 2 && move[1] == '\'')
-        {
-            return move[0].ToString();
-        }
-        return move;
+        return null;
     }
 
     private static long GetStableMemoryUsage()
@@ -128,60 +128,131 @@ public static class A_star_bid_Solver
         GC.Collect();
         return GC.GetTotalMemory(true);
     }
-}
 
-public class PriorityQueue<T>
-{
-    private readonly SortedList<int, Queue<T>> _list = new SortedList<int, Queue<T>>();
-
-    public void Enqueue(T item, int priority)
+    private static string GetSolvedState()
     {
-        if (!_list.ContainsKey(priority))
-        {
-            _list[priority] = new Queue<T>();
-        }
-        _list[priority].Enqueue(item);
+        return "WWWWWWWWWOOOOOOOOOGGGGGGGGGRRRRRRRRRBBBBBBBBBYYYYYYYYY";
     }
 
-    public T Dequeue()
+    private static CubeState InitializeCubeState(string state)
     {
-        if (_list.Count == 0)
+        CubeState initialState = new CubeState
         {
-            throw new InvalidOperationException("The priority queue is empty");
-        }
-
-        var pair = _list.Values[0];
-        var v = pair.Dequeue();
-        if (pair.Count == 0)
-        {
-            _list.RemoveAt(0);
-        }
-
-        return v;
+            State = state,
+            GCost = 0,
+            HCost = A_star_Solver.CalculateHeuristic(state),
+            Parent = null
+        };
+        initialState.TotalCost = initialState.GCost + initialState.HCost;
+        return initialState;
     }
 
-    public bool Contains(T item)
+    private static IEnumerable<CubeState> GetSuccessors(CubeState current)
     {
-        foreach (var queue in _list.Values)
+        foreach (string move in moveMappings.Keys)
         {
-            if (queue.Contains(item))
+            string newState = A_star_Solver.ApplyMove(current.State, move);
+            CubeState successor = new CubeState
             {
-                return true;
-            }
+                State = newState,
+                GCost = current.GCost + 1,
+                HCost = A_star_Solver.CalculateHeuristic(newState),
+                Parent = current,
+                Move = move
+            };
+            successor.TotalCost = successor.GCost + successor.HCost;
+            yield return successor;
         }
-        return false;
     }
 
-    public int Count
+    private static List<string> ReconstructPath(CubeState start, CubeState goal)
     {
-        get
+        List<string> path = new List<string>();
+
+        while (start != null)
         {
-            int count = 0;
+            if (start.Move != null)
+            {
+                path.Insert(0, start.Move);
+            }
+            start = start.Parent;
+        }
+
+        while (goal != null)
+        {
+            if (goal.Move != null)
+            {
+                path.Add(goal.Move);
+            }
+            goal = goal.Parent;
+        }
+
+        return path;
+    }
+
+    public class CubeState
+    {
+        public string State { get; set; }
+        public int GCost { get; set; }
+        public int HCost { get; set; }
+        public int TotalCost { get; set; }
+        public CubeState Parent { get; set; }
+        public string Move { get; set; }
+    }
+
+    public class PriorityQueue<T>
+    {
+        private readonly SortedList<int, Queue<T>> _list = new SortedList<int, Queue<T>>();
+
+        public void Enqueue(T item, int priority)
+        {
+            if (!_list.ContainsKey(priority))
+            {
+                _list[priority] = new Queue<T>();
+            }
+            _list[priority].Enqueue(item);
+        }
+
+        public T Dequeue()
+        {
+            if (_list.Count == 0)
+            {
+                throw new InvalidOperationException("The priority queue is empty");
+            }
+
+            var pair = _list.Values[0];
+            var v = pair.Dequeue();
+            if (pair.Count == 0)
+            {
+                _list.RemoveAt(0);
+            }
+
+            return v;
+        }
+
+        public bool Contains(T item)
+        {
             foreach (var queue in _list.Values)
             {
-                count += queue.Count;
+                if (queue.Contains(item))
+                {
+                    return true;
+                }
             }
-            return count;
+            return false;
+        }
+
+        public int Count
+        {
+            get
+            {
+                int count = 0;
+                foreach (var queue in _list.Values)
+                {
+                    count += queue.Count;
+                }
+                return count;
+            }
         }
     }
 }

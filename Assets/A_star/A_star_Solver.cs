@@ -233,6 +233,7 @@ public static class A_star_Solver
         return true;
     }
 
+    // euristica initiala
     /*public static int CalculateHeuristic(string state)
     {
         int heuristic = 0;
@@ -251,8 +252,9 @@ public static class A_star_Solver
     }*/
 
 
+    // ###########################33 incercare de euristica 3D
     // Define the correct positions for each piece in 3D coordinates (x, y, z)
-    private static readonly Dictionary<int, Vector3> correctPositions = new Dictionary<int, Vector3>
+    /*private static readonly Dictionary<int, Vector3> correctPositions = new Dictionary<int, Vector3>
     {
         // Up face (white)
         { 0, new Vector3(0, 1, 0) }, { 1, new Vector3(1, 1, 0) }, { 2, new Vector3(2, 1, 0) },
@@ -301,42 +303,76 @@ public static class A_star_Solver
         }
 
         return heuristic;
+    }*/
+
+    private static readonly int[] correctPositions = {
+        0, 1, 2, 3, 4, 5, 6, 7, 8,       // Up (White)
+        9, 10, 11, 12, 13, 14, 15, 16, 17, // Left (Orange)
+        18, 19, 20, 21, 22, 23, 24, 25, 26, // Front (Green)
+        27, 28, 29, 30, 31, 32, 33, 34, 35, // Right (Red)
+        36, 37, 38, 39, 40, 41, 42, 43, 44, // Back (Blue)
+        45, 46, 47, 48, 49, 50, 51, 52, 53  // Down (Yellow)
+    };
+
+    private static readonly Vector3[] piecePositions = new Vector3[54]
+    {
+        // Up (White) face
+        new Vector3(0, 1, 0), new Vector3(1, 1, 0), new Vector3(2, 1, 0),
+        new Vector3(0, 1, 1), new Vector3(1, 1, 1), new Vector3(2, 1, 1),
+        new Vector3(0, 1, 2), new Vector3(1, 1, 2), new Vector3(2, 1, 2),
+
+        // Left (Orange) face
+        new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 0, 2),
+        new Vector3(0, 1, 0), new Vector3(0, 1, 1), new Vector3(0, 1, 2),
+        new Vector3(0, 2, 0), new Vector3(0, 2, 1), new Vector3(0, 2, 2),
+
+        // Front (Green) face
+        new Vector3(0, 0, 2), new Vector3(1, 0, 2), new Vector3(2, 0, 2),
+        new Vector3(0, 1, 2), new Vector3(1, 1, 2), new Vector3(2, 1, 2),
+        new Vector3(0, 2, 2), new Vector3(1, 2, 2), new Vector3(2, 2, 2),
+
+        // Right (Red) face
+        new Vector3(2, 0, 0), new Vector3(2, 0, 1), new Vector3(2, 0, 2),
+        new Vector3(2, 1, 0), new Vector3(2, 1, 1), new Vector3(2, 1, 2),
+        new Vector3(2, 2, 0), new Vector3(2, 2, 1), new Vector3(2, 2, 2),
+
+        // Back (Blue) face
+        new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(2, 0, 0),
+        new Vector3(0, 1, 0), new Vector3(1, 1, 0), new Vector3(2, 1, 0),
+        new Vector3(0, 2, 0), new Vector3(1, 2, 0), new Vector3(2, 2, 0),
+
+        // Down (Yellow) face
+        new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(2, 0, 0),
+        new Vector3(0, 0, 1), new Vector3(1, 0, 1), new Vector3(2, 0, 1),
+        new Vector3(0, 0, 2), new Vector3(1, 0, 2), new Vector3(2, 0, 2)
+    };
+
+    private static int CalculateManhattanDistance(int pos1, int pos2)
+    {
+        Vector3 p1 = piecePositions[pos1];
+        Vector3 p2 = piecePositions[pos2];
+        return (int)(Math.Abs(p1.x - p2.x) + Math.Abs(p1.y - p2.y) + Math.Abs(p1.z - p2.z));
     }
 
-
-    /*public static int CalculateHeuristic(string state)
+    public static int CalculateHeuristic(string state)
     {
         int heuristic = 0;
 
-        // Definim pozi?iile corecte ale fiec?rei piese pe cub
-        // Pozi?iile sunt reprezentate sub forma unui array de 54 de elemente, unde fiecare element este indexul pozi?iei corecte
-        int[] correctPositions = new int[]
-        {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, // fa?a 0
-            9, 10, 11, 12, 13, 14, 15, 16, 17, // fa?a 1
-            18, 19, 20, 21, 22, 23, 24, 25, 26, // fa?a 2
-            27, 28, 29, 30, 31, 32, 33, 34, 35, // fa?a 3
-            36, 37, 38, 39, 40, 41, 42, 43, 44, // fa?a 4
-            45, 46, 47, 48, 49, 50, 51, 52, 53 // fa?a 5
-        };
-
-        // Distan?a Manhattan pentru fiecare pies?
         for (int i = 0; i < 54; i++)
         {
             if (state[i] != state[correctPositions[i]])
             {
-                int targetPos = correctPositions[state[i] - 'A']; // presupunem c? starea folose?te caractere pentru a identifica piesele
-                heuristic += Math.Abs((i / 9) - (targetPos / 9)) + Math.Abs((i % 9) - (targetPos % 9));
+                int targetPos = Array.IndexOf(state.ToCharArray(), state[correctPositions[i]]);
+                heuristic += CalculateManhattanDistance(i, targetPos);
             }
         }
 
         return heuristic;
-    }*/
+    }
 
 
-    /*
-     * ##########################################
-     */
+    // ##########################################
+
     public static void TestMoves()
     {
         string initialState = "WWWWWWWWWOOOOOOOOOGGGGGGGGGRRRRRRRRRBBBBBBBBBYYYYYYYYY";
@@ -413,10 +449,7 @@ public static class A_star_Solver
         // Adaug? teste similare pentru alte mi?c?ri
     }
 
-
-    /*
- * ##########################################
- */
+    // #################################33
 
     public static List<string> AStarSearch(string startState)
     {
