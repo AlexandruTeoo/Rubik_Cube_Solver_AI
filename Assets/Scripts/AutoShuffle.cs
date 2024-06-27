@@ -5,6 +5,7 @@ using UnityEngine;
 public class AutoShuffle : MonoBehaviour
 {
     public static List<string> moveList = new List<string>() { };
+    public static List<string> initialMoveList = new List<string>() { };
     private readonly List<string> _allMoves = new List<string>()
     {
         "U", "U'", "U2",
@@ -35,17 +36,17 @@ public class AutoShuffle : MonoBehaviour
     public void Shuffle()
     {
         List<string> moves = new List<string>();
-        int shuffleLen = Random.Range(5, 7);
+        int shuffleLen = Random.Range(3, 4);
 
         for (int i = 0; i < shuffleLen; ++i)
         {
             int randomMove = Random.Range(0, _allMoves.Count);
             moves.Add(_allMoves[randomMove]);
-            Debug.Log( _allMoves[randomMove] + " ");
+            Debug.Log( _allMoves[randomMove]);
         }
 
         moveList = moves;
-        
+        initialMoveList = new List<string>(moves);
     }
 
     public void SetState(CubeFacesState state)
@@ -53,7 +54,7 @@ public class AutoShuffle : MonoBehaviour
         _state = state;
     }
 
-    void Move(string move)
+    public void Move(string move)
     {
         _read.ReadState();
         CubeFacesState.autoShuffle = true;

@@ -53,6 +53,11 @@ public static class A_star_bid_Solver
                     UnityEngine.Debug.Log($"Memory used: {memoryUsedDuringSearch / 1024} KB");
 
                     CubeState meetingNode = cameFromGoal[currentStart.State];
+                    if (meetingNode == null ) 
+                    {
+                        UnityEngine.Debug.LogError("No solution!");
+                        return null;
+                    }
                     return ReconstructPath(currentStart, meetingNode);
                 }
 

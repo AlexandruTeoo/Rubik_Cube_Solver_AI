@@ -4,6 +4,7 @@ using UnityEditor;
 using UDebug = UnityEngine.Debug;
 using UnityEngine;
 using System.IO;
+using TMPro;
 using UnityEngine.UI;
 using System.Diagnostics;
 using static A_star_Solver;
@@ -14,12 +15,16 @@ using System;
 public class Resolve : MonoBehaviour
 {
     public Button solveButton;
+    public TMP_Text stepsText; // TMP_Text UI element to display the steps
+    public TMP_Text solutionText; // TMP_Text UI element to display the solution provided by IDA*
     private SolutionSaver solutionSaver;
+    private AutoShuffle resolve;
 
     // Start is called before the first frame update
     void Start()
     {
         solutionSaver = new SolutionSaver();
+        resolve = FindObjectOfType<AutoShuffle>();
 
         // Add a click event to the button
         solveButton.onClick.AddListener(OnSolveButtonClick);
@@ -39,14 +44,20 @@ public class Resolve : MonoBehaviour
         string startState = ReadCubeStateFromFile("cube_data.txt");
         UDebug.Log(startState);
 
+        // Get the shuffle moves from AutoShuffle
+        List<string> shuffleMoves = AutoShuffle.initialMoveList;
+        UpdateTextPanel(stepsText, "Shuffle Steps", shuffleMoves);
+
         // Solve using A* algorithm
-        SolveAndSaveSolution(startState, A_star_Solver.AStarSearch, "a_star.txt");
+        List<string> AStarSolution = SolveAndSaveSolution(startState, A_star_Solver.AStarSearch, "a_star.txt");
 
         // Solve using A* bidirectional algorithm
-        SolveAndSaveSolution(startState, A_star_bid_Solver.AStarBidirectionalSearch, "a_star_bid.txt");
+        List<string> AStarBidSolution = SolveAndSaveSolution(startState, A_star_bid_Solver.AStarBidirectionalSearch, "a_star_bid.txt");
 
         // Solve using IDA* algorithm with maxIterations
-        SolveAndSaveSolution(startState, IDA_star_Solver.IDAStarSearch, "ida_star.txt");
+        List<string> IDAStarSolution = SolveAndSaveSolution(startState, IDA_star_Solver.IDAStarSearch, "ida_star.txt");
+        UpdateTextPanel(solutionText, "IDA* Solution", IDAStarSolution);
+        StartCoroutine(ExecuteSolutionMoves(IDAStarSolution, 3.0f));
     }
 
     string ReadCubeStateFromFile(string filePath)
@@ -71,9 +82,9 @@ public class Resolve : MonoBehaviour
         }
     }
 
-    void SolveAndSaveSolution(string startState, Func<string, List<string>> solveMethod, string filePath)
+    List<string> SolveAndSaveSolution(string startState, Func<string, List<string>> solveMethod, string filePath)
     {
-        if (string.IsNullOrEmpty(startState)) return;
+        if (string.IsNullOrEmpty(startState)) return null;
 
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -100,6 +111,31 @@ public class Resolve : MonoBehaviour
         }
 
         solutionSaver.SaveSolution(filePath, solutionMoves, stopwatch.ElapsedMilliseconds, memoryUsed);
+        return solutionMoves;
+    }
+
+    private void UpdateTextPanel(TMP_Text textPanel, string title, List<string> moves)
+    {
+        if (moves == null || moves.Count == 0)
+        {
+            textPanel.text = $"{title}: No solution found!";
+        }
+        else
+        {
+            textPanel.text = $"{title}: {string.Join(", ", moves)}";
+        }
+    }
+
+    private IEnumerator ExecuteSolutionMoves(List<string> solutionMoves, float delay)
+    {
+        if (solutionMoves != null)
+        {
+            foreach (string move in solutionMoves)
+            {
+                yield return new WaitForSeconds(delay);
+                resolve.Move(move);
+            }
+        }
     }
 
     private static long GetStableMemoryUsage()
