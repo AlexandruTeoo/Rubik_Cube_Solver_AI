@@ -38,64 +38,7 @@ public class ReadCubeFaces : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*ReadState();
-
-        // Before the raycasts
-        print("Starting raycasts...");
-        Transform faceTransform = front;
-
-        Vector3 face = faceTransform.transform.position;
-        RaycastHit hit;
-
-        if (Physics.Raycast(face, faceTransform.forward, out hit, Mathf.Infinity, _layerMask))
-        {
-            Debug.DrawRay(face, faceTransform.forward * hit.distance, Color.yellow);
-            //faces.Add(hit.collider.gameObject);
-            print(hit.collider.gameObject.name);
-        }
-        else
-        {
-            Debug.DrawRay(face, faceTransform.forward * 100, Color.green);
-        }
-
-        Vector3 face1 = new Vector3(faceTransform.transform.position.x,
-                                        faceTransform.transform.position.y,
-                                        faceTransform.transform.position.z - 1);
-
-        RaycastHit hit1;
-
-        if (Physics.Raycast(face1, faceTransform.forward, out hit1, Mathf.Infinity, _layerMask))
-        {
-            Debug.DrawRay(face1, faceTransform.forward * hit1.distance, Color.yellow);
-            //faces.Add(hit.collider.gameObject);
-            print(hit1.collider.gameObject.name);
-        }
-        else
-        {
-            Debug.DrawRay(face1, faceTransform.forward * 1000, Color.green);
-        }
-
-        Vector3 face2 = new Vector3(faceTransform.transform.position.x,
-            faceTransform.transform.position.y,
-            faceTransform.transform.position.z + 1);
-
-        RaycastHit hit2;
-
-        if (Physics.Raycast(face2, faceTransform.forward, out hit2, Mathf.Infinity, _layerMask))
-        {
-            Debug.DrawRay(face2, faceTransform.forward * hit2.distance, Color.yellow);
-            //faces.Add(hit.collider.gameObject);
-            print(hit2.collider.gameObject.name);
-        }
-        else
-        {
-            Debug.DrawRay(face2, faceTransform.forward * 1000, Color.green);
-        }
-        print("Raycasts completed.");
-        // Print additional information
-        *//*print($"Hit distance 1: {hit.distance}");
-        print($"Hit distance 2: {hit1.distance}");
-        print($"Hit distance 3: {hit2.distance}");*/
+       
     }
 
     public void ReadState()
@@ -168,7 +111,6 @@ public class ReadCubeFaces : MonoBehaviour
             {
                 Debug.DrawRay(face, faceTransform.forward * hit.distance, Color.yellow);
                 faces.Add(hit.collider.gameObject);
-                //print(hit.collider.gameObject.name);
             }
             else
             {
@@ -179,12 +121,11 @@ public class ReadCubeFaces : MonoBehaviour
         return faces;
     }
 
-    // Metoda pentru a scrie datele în fisierul "cube_data.txt"
+    // metoda pentru a scrie datele în fisierul "cube_data.txt"
     private void WriteCubeDataToFile()
     {
         using (StreamWriter writer = new StreamWriter("cube_data.txt"))
         {
-            // Scrieti datele pentru fiecare fata in fisierul text
             WriteFaceData(_upFace, up, writer);
             WriteFaceData(_leftFace, left, writer);
             WriteFaceData(_frontFace, front, writer);
@@ -194,23 +135,19 @@ public class ReadCubeFaces : MonoBehaviour
         }
     }
 
-    // Metoda pentru a citi culorile pentru fiecare fata a cubului si a le salva in fisier
+    // metoda pentru a citi culorile pentru fiecare fata a cubului si a le salva in fisier
     public void ReadStateAndSaveToFile()
     {
         _state = FindObjectOfType<CubeFacesState>();
         _cube2D = FindObjectOfType<Cube2D>();
-
-        // Citirea culorilor si salvarea lor in fisier
-        WriteCubeDataToFile();
-
-        // Actualizarea culorilor în interfata Unity
-        _cube2D.SetColor();
+        
+        WriteCubeDataToFile(); // citirea culorilor si salvarea lor in fisier
+        
+        _cube2D.SetColor(); // actualizarea culorilor în interfata Unity
     }
 
     private void WriteFaceData(List<GameObject> faceStart, Transform faceTransform, StreamWriter writer)
     {
-        //writer.Write(faceTransform + "\n");
-        //int cnt = 0;
         foreach (GameObject f in faceStart)
         {
             Vector3 face = f.transform.position;
@@ -219,27 +156,17 @@ public class ReadCubeFaces : MonoBehaviour
             if (Physics.Raycast(face, faceTransform.forward, out hit, Mathf.Infinity, _layerMask))
             {
                 Debug.DrawRay(face, faceTransform.forward * hit.distance, Color.yellow);
-                // Obtineti culoarea patratelului atins de raza de coliziune
                 Color cubeColor = hit.collider.gameObject.GetComponent<Renderer>().material.color;
-                // Scrieti culoarea sub forma unui string in fisier
                 writer.Write(GetColorCode(cubeColor));
-                /*cnt++;
-                if (cnt == 3)
-                {
-                    writer.WriteLine();
-                    cnt = 0;
-                }*/
             }
             else
             {
                 Debug.DrawRay(face, faceTransform.forward * 1000, Color.green);
             }
         }
-        // Trecem la urmatoarea linie dupa ce am citit culorile pentru toate patratelele de pe aceasta fata
-        //writer.WriteLine();
     }
 
-    // Functie pentru a obtine codul de culoare corespunzator culorii
+    // functie pentru a obtine codul de culoare corespunzator culorii
     private string GetColorCode(Color color)
     {
         if (color == Color.white)

@@ -7,16 +7,16 @@ using System.IO;
 using TMPro;
 using UnityEngine.UI;
 using System.Diagnostics;
-using static A_star_Solver;
-using static A_star_bid_Solver;
-using static IDA_star_Solver;
+using static AStarSolver;
+using static AStarBidSolver;
+using static IDAStarSolver;
 using System;
 
 public class Resolve : MonoBehaviour
 {
     public Button solveButton;
-    public TMP_Text stepsText; // TMP_Text UI element to display the steps
-    public TMP_Text solutionText; // TMP_Text UI element to display the solution provided by IDA*
+    public TMP_Text stepsText;
+    public TMP_Text solutionText;
     private SolutionSaver solutionSaver;
     private AutoShuffle resolve;
 
@@ -38,24 +38,19 @@ public class Resolve : MonoBehaviour
 
     void OnSolveButtonClick()
     {
-        // Call the function to save the cube colors and send the file to Python
         FindObjectOfType<ReadCubeFaces>().ReadStateAndSaveToFile();
 
         string startState = ReadCubeStateFromFile("cube_data.txt");
         UDebug.Log(startState);
 
-        // Get the shuffle moves from AutoShuffle
         List<string> shuffleMoves = AutoShuffle.initialMoveList;
         UpdateTextPanel(stepsText, "Shuffle Steps", shuffleMoves);
 
-        // Solve using A* algorithm
-        List<string> AStarSolution = SolveAndSaveSolution(startState, A_star_Solver.AStarSearch, "a_star.txt");
+        List<string> AStarSolution = SolveAndSaveSolution(startState, AStarSolver.AStarSearch, "a_star.txt");
 
-        // Solve using A* bidirectional algorithm
-        List<string> AStarBidSolution = SolveAndSaveSolution(startState, A_star_bid_Solver.AStarBidirectionalSearch, "a_star_bid.txt");
+        List<string> AStarBidSolution = SolveAndSaveSolution(startState, AStarBidSolver.AStarBidirectionalSearch, "a_star_bid.txt");
 
-        // Solve using IDA* algorithm with maxIterations
-        List<string> IDAStarSolution = SolveAndSaveSolution(startState, IDA_star_Solver.IDAStarSearch, "ida_star.txt");
+        List<string> IDAStarSolution = SolveAndSaveSolution(startState, IDAStarSolver.IDAStarSearch, "ida_star.txt");
         UpdateTextPanel(solutionText, "IDA* Solution", IDAStarSolution);
         StartCoroutine(ExecuteSolutionMoves(IDAStarSolution, 3.0f));
     }
@@ -65,7 +60,7 @@ public class Resolve : MonoBehaviour
         try
         {
             string state = File.ReadAllText(filePath).Trim();
-            if (state.Length == 54) // Ensure the state has 54 characters
+            if (state.Length == 54)
             {
                 return state;
             }

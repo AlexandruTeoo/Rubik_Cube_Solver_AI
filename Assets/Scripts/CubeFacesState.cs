@@ -12,13 +12,6 @@ public class CubeFacesState : MonoBehaviour
     public List<GameObject> right = new List<GameObject>();
     public List<GameObject> left = new List<GameObject>();
 
-    /*public List<char> up;
-    public List<char> down;
-    public List<char> front;
-    public List<char> back;
-    public List<char> left;
-    public List<char> right;*/
-
     public static bool autoShuffle = false;
     public static bool started = false;
     
@@ -77,11 +70,4 @@ public class CubeFacesState : MonoBehaviour
         stateString += GetSideString(back);
         return stateString;
     }
-
-    // Metod? pentru a returna starea cubului ca string
-    /*public override string ToString()
-    {
-        return new string(up.ToArray()) + new string(right.ToArray()) + new string(front.ToArray()) +
-               new string(left.ToArray()) + new string(back.ToArray()) + new string(down.ToArray());
-    }*/
 }

@@ -53,7 +53,6 @@ public class RotateCube : MonoBehaviour
         {
             firstPressPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y); // iau pozitiile lui x si y din din sist.
                                                                                             // xOy la apasarea primului click
-            //print(firstPressPosition);
         }
 
         if (Input.GetMouseButtonUp(1))

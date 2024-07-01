@@ -13,6 +13,7 @@ public class Cube2D : MonoBehaviour
     public Transform back;
     public Transform left;
     public Transform right;
+
     // Start is called before the first frame update
     void Start()
     {
